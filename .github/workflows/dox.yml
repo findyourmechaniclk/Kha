@@ -19,12 +19,22 @@ jobs:
       with:
         haxe-version: 4.2.3
     - uses: actions/checkout@v1
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.haxelib
+          nodejs_bin
+        key: ${{ runner.os }}-haxe-4.2.3-dox-nodejs-v1
     - name: Install dox
       run: haxelib install dox
     - name: Get Submodules
       run: git submodule update --init --recursive
     - name: Get Node.js
-      run: git clone https://github.com/Kode/nodejs_bin.git --depth 1
+      run: |
+        if [ ! -d nodejs_bin ]; then
+          git clone https://github.com/Kode/nodejs_bin.git --depth 1
+        fi
     - name: Setup Node.js
       run: nodejs_bin/copysysbin.sh
     - name: Create documentation
